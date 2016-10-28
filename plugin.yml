@@ -1,0 +1,16 @@
+name: VoiceBox
+main: com.kraken.voicebox.VoiceBox
+version: 1.0 (alpha)
+commands: 
+     vb:
+        description: Info for the VoiceBox chat plugin.
+        usage: /<command>
+     re:
+        description: Reply publicly to a close (< 20m away) player.
+        usage: /<command> <name> <msg>
+     w:
+        description: Whisper privately to a nearby (< 5m away) player.
+        usage: /<command> <name> <msg>
+     y:
+        description: Yell loudly to all who can hear you (< 126m away).
+        usage: /<command> <msg>
