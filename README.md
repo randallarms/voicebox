@@ -1,4 +1,4 @@
-# VoiceBox
+# voicebox
 by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 
 Simple custom chat plugin for Bukkit on Minecraft (MCv1.9).
