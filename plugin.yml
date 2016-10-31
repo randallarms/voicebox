@@ -1,9 +1,12 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 1.0 (alpha)
+version: 0.1 (alpha)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
+        usage: /<command>
+     clearChat:
+        description: Clears chat.
         usage: /<command>
      re:
         description: Reply publicly to a close (< 20m away) player.

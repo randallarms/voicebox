@@ -72,6 +72,16 @@ public class VoiceBox extends JavaPlugin {
             return true;
         } //End of vb command
         
+    	//Command: clearChat
+        if (cmd.getName().equalsIgnoreCase("clearChat") && sender instanceof Player) {
+        	
+        	for (int i = 0; i < 20; i++) {
+        		player.sendMessage(" ");
+        	}
+            return true;
+            
+        } //End of clearChat command
+        
         //Command: bc (Chat type: 'broadcast/radio')
             // "/bc 4 Message"
             // broadcasts "Message" to all listeners who have a radio and are tuned to channel 4
