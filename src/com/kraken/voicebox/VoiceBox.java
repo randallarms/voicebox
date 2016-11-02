@@ -1,3 +1,13 @@
+// ========================================================================
+// |VOICEBOX v0.2
+// | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
+// | code inspired by various Bukkit & Spigot devs -- thank you. 
+// |
+// | Always free & open-source! If this plugin is being sold or re-branded,
+// | please let me know on the SpigotMC site, or wherever you can. Thanks!
+// | Source code: https://github.com/randallarms/voicebox
+// ========================================================================
+
 package com.kraken.voicebox;
 
 import org.bukkit.Bukkit;
