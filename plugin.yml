@@ -1,19 +1,27 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 0.2.2 (alpha)
+version: 0.3 (alpha)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
         usage: /<command>
+        aliases: [voicebox]
      clearChat:
         description: Clears chat.
         usage: /<command>
+        aliases: [clearchat]
      re:
         description: Reply publicly to a close (< 20m away) player.
         usage: /<command> <name> <msg>
+        aliases: [reply, respond]
      w:
         description: Whisper privately to a nearby (< 5m away) player.
         usage: /<command> <name> <msg>
+        aliases: [whisper, tell]
      y:
         description: Yell loudly to all who can hear you (< 126m away).
         usage: /<command> <msg>
+        aliases: [yell, shout]
+     censor:
+        description: Adjust the censor of blacklisted chat phrases.
+        usage: /<command> <add/remove> <phrase>
