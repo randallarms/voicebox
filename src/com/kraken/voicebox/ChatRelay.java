@@ -1,5 +1,7 @@
 package com.kraken.voicebox;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -9,11 +11,29 @@ public class ChatRelay {
 	
 	Player player;
 	String[] args;
+	ArrayList<String> shhh;
 	
-	public ChatRelay(Player player, String[] args) {
+	public ChatRelay(Player player, String[] args, ArrayList<String> shhh) {
 		
 		this.player = player;
 		this.args = args;
+		this.shhh = shhh;
+		
+	}
+	
+	public boolean isCensored(String arg) {
+		
+		//Check the censor
+		for ( String badWord : shhh ) {
+			
+			if ( arg.toLowerCase().contains(badWord) ) {
+				player.sendMessage(ChatColor.RED + "You are forbidden from speaking banned phrases.");
+				return true;
+			}
+			
+		}
+		
+		return false;
 		
 	}
 	
@@ -36,6 +56,10 @@ public class ChatRelay {
 	        	try {
 	        		
 		        	while (args[n] != null) {
+		        		
+			        	if ( isCensored(args[n]) ) {
+			        		return true;
+			        	}
 		        		
 		        		if (n >= 2) {
 			        		rawMessage = rawMessage + " " + args[n];
@@ -86,6 +110,10 @@ public class ChatRelay {
     		
         	if (length > 1) {
 	        	while (args[n] != null) {
+	        		
+	        		if ( isCensored(args[n]) ) {
+		        		return true;
+		        	}
 	        		
 	        		if (n >= 2) {
 		        		rawMessage = rawMessage + " " + args[n];
@@ -148,6 +176,10 @@ public class ChatRelay {
         	int length = args.length;
     		
         	while (args[n] != null) {
+        		
+        		if ( isCensored(args[n]) ) {
+	        		return true;
+	        	}
         		
         		if (n >= 1) {
 	        		rawMessage = rawMessage + " " + args[n];
