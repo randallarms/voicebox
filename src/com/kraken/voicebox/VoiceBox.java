@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.3
+// |VOICEBOX v0.3.1
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -24,18 +24,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class VoiceBox extends JavaPlugin {
 	
-	ArrayList<String> shhh = new ArrayList<String>(); 
-    File censorFile = new File("plugins/VoiceBox", "censor.yml");
-    FileConfiguration censor = YamlConfiguration.loadConfiguration(censorFile);
+	public ArrayList<String> shhh = new ArrayList<String>(); 
+    private File censorFile = new File("plugins/VoiceBox", "censor.yml");
+    private FileConfiguration censor = YamlConfiguration.loadConfiguration(censorFile);
+	String motd;
 
     @Override
     public void onEnable() {
     	
         getLogger().info("VoiceBox has been enabled.");
+    	PluginManager pm = getServer().getPluginManager();
+    	VBListener listener = new VBListener(this);
+		pm.registerEvents(listener, this);
+		
+		this.motd = getConfig().getString("motd");
         
       //Initialize the censor with a dummy value
         censor.set("yarbles", true);
@@ -122,8 +129,34 @@ public class VoiceBox extends JavaPlugin {
 	    		case "voicebox":
 	    		case "vb":		
 	    			
-	    			player.sendMessage(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GRAY + " | VoiceBox | Immersive chat plugin.");
-	                return true;
+	    			if ( player.isOp() && args.length > 1) {
+	    				
+	    				switch ( args[0].toLowerCase() ) {
+	    				
+	    					case "motd":
+	    						String message = args[1];
+	    						for (int i = 2; i < args.length; i++) {
+	    							message = message + " " + args[i];
+	    						}
+	    						getConfig().set( "motd", message );
+    							saveConfig();
+	    						this.motd = message;
+	    						player.sendMessage(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GREEN + " | MotD successfully set to: \"" + message + "\"");
+	    						return true;
+	    				
+	    				}
+	    				
+	    			} else if (args.length == 0) {
+	    			
+		    			player.sendMessage(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GRAY + " | VoiceBox | Immersive chat plugin.");
+		                return true;
+		                
+	    			} else {
+	    				
+	    				player.sendMessage(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
+	    		        return true;
+	    				
+	    			}
 	                
 	        //Command: clearChat        
 	    		case "clearChat":
@@ -210,6 +243,12 @@ public class VoiceBox extends JavaPlugin {
     	player.sendMessage(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
         return true;
         
+    }
+    
+    public String getMotd() {
+  	  
+  	  return motd;
+  	  
     }
     
 }
