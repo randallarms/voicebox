@@ -4,7 +4,7 @@ version: 0.3 (alpha)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
-        usage: /<command>
+        usage: /<command> {motd} {msg}
         aliases: [voicebox]
      clearChat:
         description: Clears chat.

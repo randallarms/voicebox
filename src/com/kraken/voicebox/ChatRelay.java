@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 
 public class ChatRelay {
 	
-	Player player;
-	String[] args;
-	ArrayList<String> shhh;
+	private Player player;
+	private String[] args;
+	private ArrayList<String> shhh;
 	
 	public ChatRelay(Player player, String[] args, ArrayList<String> shhh) {
 		
