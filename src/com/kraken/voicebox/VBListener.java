@@ -19,7 +19,7 @@ public class VBListener implements Listener {
       @EventHandler
       public void onPlayerJoin(PlayerJoinEvent e) {
     	  
-          e.setJoinMessage( format( plugin.getMotd() ) );
+          e.getPlayer().sendMessage( format( plugin.getMotd() ) );
     	  
       }
       
