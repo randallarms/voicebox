@@ -1,6 +1,6 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 0.3 (alpha)
+version: 0.4 (beta)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
@@ -25,3 +25,6 @@ commands:
      censor:
         description: Adjust the censor of blacklisted chat phrases.
         usage: /<command> <add/remove> <phrase>
+     quote:
+        description: Get a random quote, or add a quote.
+        usage: /<command> {author} {quote}
