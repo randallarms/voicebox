@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.3.1
+// |VOICEBOX v0.4
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -43,6 +43,11 @@ public class VoiceBox extends JavaPlugin {
 		pm.registerEvents(listener, this);
 		
 		this.motd = getConfig().getString("motd");
+		if (motd == null) {
+			motd = "Welcome to the server!";
+			getConfig().set("motd", "Welcome to the server!");
+			saveConfig();
+		}
         
       //Initialize the censor with a dummy value
         censor.set("yarbles", true);
@@ -235,6 +240,25 @@ public class VoiceBox extends JavaPlugin {
 						return true;
 						
 		    		}
+		    		
+		    	//Command: quote
+	    			case "quote":
+	    				
+	    				switch (args.length) {
+	    					
+		    				case 0:
+		    					new Quotes(this).sendQuote(player);
+		    					return true;
+		    					
+		    				case 1:	
+		    					player.sendMessage(ChatColor.GRAY + "Unrecognized format, use \"/quote\"");	
+								return true;
+							
+							default:
+								new Quotes(this).addQuote(args[0], args);
+								return true;
+	    					
+	    				}
 	    	        
 	    	}
 	    	
