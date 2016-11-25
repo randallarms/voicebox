@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.4.1
+// |VOICEBOX v0.4.1.1
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -290,6 +290,7 @@ public class VoiceBox extends JavaPlugin {
 			    				case "enable":
 			    				case "enabled":
 			    					getConfig().set("joinMessageEnabled", true);
+			    					saveConfig();
 			    					this.joinMsgEnabled = true;
 			    					
 			    				    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() + " times 15 26 5");
@@ -305,6 +306,7 @@ public class VoiceBox extends JavaPlugin {
 			    				case "disable":
 			    				case "disabled":
 			    					getConfig().set("joinMessageEnabled", false);
+			    					saveConfig();
 			    					this.joinMsgEnabled = false;
 			    					
 			    				    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() + " times 15 26 5");
