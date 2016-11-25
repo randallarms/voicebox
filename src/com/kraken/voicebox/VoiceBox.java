@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.4
+// |VOICEBOX v0.4.1.1
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -33,6 +34,7 @@ public class VoiceBox extends JavaPlugin {
     private File censorFile = new File("plugins/VoiceBox", "censor.yml");
     private FileConfiguration censor = YamlConfiguration.loadConfiguration(censorFile);
 	String motd;
+	Boolean joinMsgEnabled;
 
     @Override
     public void onEnable() {
@@ -42,13 +44,20 @@ public class VoiceBox extends JavaPlugin {
     	VBListener listener = new VBListener(this);
 		pm.registerEvents(listener, this);
 		
-		this.motd = getConfig().getString("motd");
-		if (motd == null) {
-			motd = "Welcome to the server!";
+		if (getConfig().getString("motd") == null) {
 			getConfig().set("motd", "Welcome to the server!");
 			saveConfig();
 		}
-        
+		
+		this.motd = getConfig().getString("motd");
+		
+		if ( getConfig().get("joinMsgEnabled") == null ) {
+			getConfig().set("joinMsgEnabled", true);
+			saveConfig();
+		}
+		
+		this.joinMsgEnabled = getConfig().getBoolean("joinMsgEnabled");
+		
       //Initialize the censor with a dummy value
         censor.set("yarbles", true);
         
@@ -153,7 +162,12 @@ public class VoiceBox extends JavaPlugin {
 	    				
 	    			} else if (args.length == 0) {
 	    			
-		    			player.sendMessage(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GRAY + " | VoiceBox | Immersive chat plugin.");
+	    				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() + " times 15 80 15");
+    					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
+    							+ " title {\"text\":\"VoiceBox\",\"color\":\"light_purple\",\"bold\":\"true\"}");
+    					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
+    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_\",\"color\":\"gold\"}");  
+    					
 		                return true;
 		                
 	    			} else {
@@ -243,6 +257,7 @@ public class VoiceBox extends JavaPlugin {
 		    		
 		    	//Command: quote
 	    			case "quote":
+	    			case "quotes":
 	    				
 	    				switch (args.length) {
 	    					
@@ -259,6 +274,57 @@ public class VoiceBox extends JavaPlugin {
 								return true;
 	    					
 	    				}
+	    				
+	    		//Command: joinMsg <on/off>
+		    		case "joinMsg":
+		    		case "joinmsg":
+		    		case "joinMessage":
+		    		case "joinmessage":
+		    			
+			    		if ( player.isOp() && args.length == 1) {
+			    			
+			    			switch (args[0]) {
+			    			
+			    				case "on":
+			    				case "true":
+			    				case "enable":
+			    				case "enabled":
+			    					getConfig().set("joinMessageEnabled", true);
+			    					saveConfig();
+			    					this.joinMsgEnabled = true;
+			    					
+			    				    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() + " times 15 26 5");
+			    					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
+			    							+ " title {\"text\":\"Join Message\",\"color\":\"light_purple\"}");
+			    					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
+			    							+ " subtitle {\"text\":\"Enabled\",\"color\":\"green\"}"); 
+			    					
+			    					return true;
+			    					
+			    				case "off":
+			    				case "false":
+			    				case "disable":
+			    				case "disabled":
+			    					getConfig().set("joinMessageEnabled", false);
+			    					saveConfig();
+			    					this.joinMsgEnabled = false;
+			    					
+			    				    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() + " times 15 26 5");
+			    					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
+			    							+ " title {\"text\":\"Join Message\",\"color\":\"light_purple\"}");
+			    					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
+			    							+ " subtitle {\"text\":\"Disabled\",\"color\":\"red\"}");  
+			    					
+			    					return true;
+			    			
+			    			}
+			    			
+			    		} else {
+			    			
+			    			player.sendMessage(ChatColor.GRAY + "Unrecognized format, use \"/joinMsg <on/off>\"");	
+							return true;
+							
+			    		}
 	    	        
 	    	}
 	    	
@@ -271,8 +337,12 @@ public class VoiceBox extends JavaPlugin {
     
     public String getMotd() {
   	  
-  	  return motd;
+  	    return motd;
   	  
+    }
+    
+    public Boolean joinMsgEnabled() {
+  	    return joinMsgEnabled;
     }
     
 }

@@ -1,6 +1,6 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 0.4 (beta)
+version: 0.4.1.1 (beta)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
@@ -28,3 +28,8 @@ commands:
      quote:
         description: Get a random quote, or add a quote.
         usage: /<command> {author} {quote}
+        aliases: [quotes]
+     joinMsg:
+        description: Enable/disable player join messages.
+        usage: /<command> <on/off>
+        aliases: [joinmsg, joinMessage, joinmessage]

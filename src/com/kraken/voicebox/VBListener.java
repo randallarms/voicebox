@@ -11,13 +11,16 @@ public class VBListener implements Listener {
 	
       public VBListener(VoiceBox plugin) {
     	  
-    	  plugin.getServer().getPluginManager().registerEvents(this, plugin);
     	  this.plugin = plugin;
     	  
       }
       
       @EventHandler
       public void onPlayerJoin(PlayerJoinEvent e) {
+    	  
+    	  if ( !plugin.joinMsgEnabled() ) {
+    		  e.setJoinMessage("");
+    	  }
     	  
           e.getPlayer().sendMessage( format( plugin.getMotd() ) );
     	  
