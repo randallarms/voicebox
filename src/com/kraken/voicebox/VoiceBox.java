@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.4.1.1
+// |VOICEBOX v0.4.1.2
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -184,6 +184,12 @@ public class VoiceBox extends JavaPlugin {
 	    			for (int i = 0; i < 20; i++) {
 	            		player.sendMessage(" ");
 	            	}
+	                return true;
+	                
+	        //Command: version        
+	    		case "version":
+	    			
+	    			player.sendMessage(ChatColor.GRAY + "CURRENT: VoiceBox v0.4.1.2 (beta)");
 	                return true;
 	                
 	        //Command: y <msg> (Chat type: 'yell')  
