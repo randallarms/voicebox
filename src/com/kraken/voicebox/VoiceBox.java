@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.4.1.2
+// |VOICEBOX v0.5
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
