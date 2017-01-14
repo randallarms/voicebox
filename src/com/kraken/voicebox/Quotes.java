@@ -46,7 +46,7 @@ public class Quotes {
 		
 		int n = new Random().nextInt(i) + 1;
 		
-		player.sendMessage( ChatColor.GRAY + "\"" + quotes.get(n + ".quote") + "\" --" + ChatColor.GREEN + "" + quotes.get(n + ".author") );
+		player.sendMessage( ChatColor.DARK_GRAY + "[" + n + "] " + ChatColor.GRAY + "\"" + quotes.get(n + ".quote") + "\" --" + ChatColor.GREEN + "" + quotes.get(n + ".author") );
 		
 	}
 	
@@ -59,7 +59,7 @@ public class Quotes {
 		}
 		
 		//Concatenate the message
-    	int n = 1;
+    	int n = 2;
     	String quote = new String();
     	int length = args.length;
     	
@@ -94,5 +94,19 @@ public class Quotes {
 		}
 		
 	}
-    
-}
+	
+	public void delQuote(String name, int n) {
+			
+			quotes.set(n + ".quote", "");
+			quotes.set(n + ".author", "");
+			quotes.set(Integer.toString(n), "");
+			
+			try {
+				quotes.save(qFile);
+			} catch (IOException e) {
+				// No need to fuss!
+			}
+			
+		}
+	    
+	}
