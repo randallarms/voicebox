@@ -50,7 +50,7 @@ public class Quotes {
 		
 	}
 	
-	public void addQuote(String name, String[] args) {
+	public void addQuote(Player player, String name, String[] args) {
 		
 		i = 1;
 		
@@ -67,11 +67,11 @@ public class Quotes {
     		
         	while (args[n] != null) {
         		
-        		if (n >= 2) {
-        			quote = quote + " " + args[n];
+        		if (n == 1) {
+        			quote = quote + args[n];
 	        		n++;
-        	    } else {
-        	    	quote = quote + args[n];
+        		} else if (n >= 2) {
+        			quote = quote + " " + args[n];
 	        		n++;
         	    }
         		
@@ -93,19 +93,23 @@ public class Quotes {
 			// No need to fuss!
 		}
 		
+		player.sendMessage( ChatColor.GREEN + "Quote successfully added." );
+		
 	}
 	
-	public void delQuote(String name, int n) {
+	public void delQuote(Player player, String n) {
 			
 			quotes.set(n + ".quote", "");
 			quotes.set(n + ".author", "");
-			quotes.set(Integer.toString(n), "");
+			quotes.set(n, null);
 			
 			try {
 				quotes.save(qFile);
 			} catch (IOException e) {
 				// No need to fuss!
 			}
+			
+			player.sendMessage( ChatColor.GREEN + "Quote successfully deleted." );
 			
 		}
 	    
