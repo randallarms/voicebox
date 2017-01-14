@@ -1,7 +1,7 @@
 #VoiceBox
 Kraken | https://www.spigotmc.org/members/kraken_.287802/
 
-Simple custom chat plugin for Bukkit on Minecraft (MCv1.9).
+Simple custom chat plugin for Bukkit on Minecraft (MCv1.11.2).
 
 HOW TO INSTALL AND USE: https://www.spigotmc.org/threads/voicebox.189577/
 
