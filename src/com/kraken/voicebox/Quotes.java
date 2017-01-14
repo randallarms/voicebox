@@ -46,11 +46,11 @@ public class Quotes {
 		
 		int n = new Random().nextInt(i) + 1;
 		
-		player.sendMessage( ChatColor.GRAY + "\"" + quotes.get(n + ".quote") + "\" --" + ChatColor.GREEN + "" + quotes.get(n + ".author") );
+		player.sendMessage( ChatColor.DARK_GRAY + "[" + n + "] " + ChatColor.GRAY + "\"" + quotes.get(n + ".quote") + "\" --" + ChatColor.GREEN + "" + quotes.get(n + ".author") );
 		
 	}
 	
-	public void addQuote(String name, String[] args) {
+	public void addQuote(Player player, String name, String[] args) {
 		
 		i = 1;
 		
@@ -59,7 +59,7 @@ public class Quotes {
 		}
 		
 		//Concatenate the message
-    	int n = 1;
+    	int n = 2;
     	String quote = new String();
     	int length = args.length;
     	
@@ -67,11 +67,11 @@ public class Quotes {
     		
         	while (args[n] != null) {
         		
-        		if (n >= 2) {
-        			quote = quote + " " + args[n];
+        		if (n == 1) {
+        			quote = quote + args[n];
 	        		n++;
-        	    } else {
-        	    	quote = quote + args[n];
+        		} else if (n >= 2) {
+        			quote = quote + " " + args[n];
 	        		n++;
         	    }
         		
@@ -93,6 +93,24 @@ public class Quotes {
 			// No need to fuss!
 		}
 		
+		player.sendMessage( ChatColor.GREEN + "Quote successfully added." );
+		
 	}
-    
-}
+	
+	public void delQuote(Player player, String n) {
+			
+			quotes.set(n + ".quote", "");
+			quotes.set(n + ".author", "");
+			quotes.set(n, null);
+			
+			try {
+				quotes.save(qFile);
+			} catch (IOException e) {
+				// No need to fuss!
+			}
+			
+			player.sendMessage( ChatColor.GREEN + "Quote successfully deleted." );
+			
+		}
+	    
+	}

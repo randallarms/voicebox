@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.5
+// |VOICEBOX v0.5.1
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -281,8 +281,18 @@ public class VoiceBox extends JavaPlugin {
 								return true;
 							
 							default:
-								new Quotes(this).addQuote(args[0], args);
-								return true;
+								switch (args[0]) {
+								
+									case "add":
+										new Quotes(this).addQuote(player, args[1], args);
+										return true;
+										
+									case "del":
+									case "delete":
+										new Quotes(this).delQuote(player, args[1]);
+										return true;
+									
+								}
 	    					
 	    				}
 	    				
