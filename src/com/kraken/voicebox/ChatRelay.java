@@ -213,4 +213,25 @@ public class ChatRelay {
     	
     }
     
+    public boolean grumble() {
+    	
+		int blockDistance = 20;
+		Location playerLocation = player.getLocation();
+	        	
+    	for (Player peep : Bukkit.getServer().getOnlinePlayers()) {
+    		
+    		if (peep.getLocation().distance(playerLocation) <= blockDistance && peep != player) {
+    			peep.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.ITALIC + player.getName() + " grumbles, " +
+    							 ChatColor.RESET + "" + ChatColor.DARK_GREEN + "\"" + ChatColor.MAGIC + "asdf" + ChatColor.RESET + "" + ChatColor.DARK_GREEN + "...\"");
+    		}
+    		
+    	}	
+    	
+        player.sendMessage(ChatColor.GREEN + "" + ChatColor.ITALIC + "You grumble, " +
+				 			ChatColor.RESET + "" + ChatColor.GREEN + "\"" + ChatColor.MAGIC + "asdf" + ChatColor.RESET + "" + ChatColor.GREEN + "...\"");
+        
+        return true;
+            
+    }
+    
 }

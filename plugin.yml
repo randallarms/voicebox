@@ -1,6 +1,6 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 0.4.1.2 (beta)
+version: 0.5 (beta)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
@@ -22,6 +22,9 @@ commands:
         description: Yell loudly to all who can hear you (< 126m away).
         usage: /<command> <msg>
         aliases: [yell, shout]
+     grumble:
+        description: Grumble jibberish to close (< 20m away) players.
+        usage: /<command>
      censor:
         description: Adjust the censor of blacklisted chat phrases.
         usage: /<command> <add/remove> <phrase>

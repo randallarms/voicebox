@@ -191,7 +191,12 @@ public class VoiceBox extends JavaPlugin {
 	    			
 	    			player.sendMessage(ChatColor.GRAY + "CURRENT: VoiceBox v0.4.1.2 (beta)");
 	                return true;
-	                
+	         
+	        //Command: grumble (Chat type: 'grumble')  
+	    		case "grumble":
+	    			
+	    			return chat.grumble();
+            
 	        //Command: y <msg> (Chat type: 'yell')  
 	    		case "shout":
 	    		case "yell":
