@@ -38,13 +38,19 @@ public class Quotes {
 	
 	int i = 0;
 	
-	public void sendQuote(Player player) {
+	public void sendRandomQuote(Player player) {
 		
 		for ( @SuppressWarnings("unused") String key : quotes.getKeys(false) ) {
 			i++;
 		}
 		
 		int n = new Random().nextInt(i) + 1;
+		
+		player.sendMessage( ChatColor.DARK_GRAY + "[" + n + "] " + ChatColor.GRAY + "\"" + quotes.get(n + ".quote") + "\" --" + ChatColor.GREEN + "" + quotes.get(n + ".author") );
+		
+	}
+	
+	public void sendQuote(Player player, int n) {
 		
 		player.sendMessage( ChatColor.DARK_GRAY + "[" + n + "] " + ChatColor.GRAY + "\"" + quotes.get(n + ".quote") + "\" --" + ChatColor.GREEN + "" + quotes.get(n + ".author") );
 		
