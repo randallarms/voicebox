@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.5.1
+// |VOICEBOX v0.5.2
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -273,16 +273,25 @@ public class VoiceBox extends JavaPlugin {
 	    				switch (args.length) {
 	    					
 		    				case 0:
-		    					new Quotes(this).sendQuote(player);
+		    					new Quotes(this).sendRandomQuote(player);
 		    					return true;
 		    					
 		    				case 1:	
-		    					player.sendMessage(ChatColor.GRAY + "Unrecognized format, use \"/quote\"");	
-								return true;
+		    					
+		    					File qFile = new File("plugins/VoiceBox", "quotes.yml");
+		    					FileConfiguration quotes = YamlConfiguration.loadConfiguration(qFile);
+		    					
+		    					if ( quotes.getString(args[0] + ".quote") != null ) {
+		    						int n = Integer.valueOf(args[0]);
+		    						new Quotes(this).sendQuote(player, n);
+		    						return true;
+		    					} else {
+		    						player.sendMessage(ChatColor.GRAY + "Unrecognized format or quote not found.");	
+		    						return true;
+	    						}
 							
 							default:
 								switch (args[0]) {
-								
 									case "add":
 										new Quotes(this).addQuote(player, args[1], args);
 										return true;
@@ -291,7 +300,6 @@ public class VoiceBox extends JavaPlugin {
 									case "delete":
 										new Quotes(this).delQuote(player, args[1]);
 										return true;
-									
 								}
 	    					
 	    				}
