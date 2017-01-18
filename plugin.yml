@@ -1,6 +1,6 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 0.5.2 (beta)
+version: 0.5.3 (beta)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.
@@ -36,6 +36,3 @@ commands:
         description: Enable/disable player join messages.
         usage: /<command> <on/off>
         aliases: [joinmsg, joinMessage, joinmessage]
-     version:
-        description: Get the current version of this plugin.
-        usage: /<command>

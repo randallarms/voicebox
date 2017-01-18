@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.5.2
+// |VOICEBOX v0.5.3
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -166,7 +166,7 @@ public class VoiceBox extends JavaPlugin {
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
     							+ " title {\"text\":\"VoiceBox\",\"color\":\"light_purple\",\"bold\":\"true\"}");
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
-    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_\",\"color\":\"gold\"}");  
+    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.5.3)\",\"color\":\"gold\"}");  
     					
 		                return true;
 		                
@@ -184,12 +184,6 @@ public class VoiceBox extends JavaPlugin {
 	    			for (int i = 0; i < 20; i++) {
 	            		player.sendMessage(" ");
 	            	}
-	                return true;
-	                
-	        //Command: version        
-	    		case "version":
-	    			
-	    			player.sendMessage(ChatColor.GRAY + "CURRENT: VoiceBox v0.4.1.2 (beta)");
 	                return true;
 	         
 	        //Command: grumble (Chat type: 'grumble')  
