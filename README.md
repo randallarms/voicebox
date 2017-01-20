@@ -9,6 +9,8 @@ VoiceBox features several chat modes reminiscent of popular MMOs' own stylings (
 
 This plugin does differ, however, in that players must be within physical range of the speaker to hear the chat. While whispers must go out to close players, yelling/shouting can reach the ears of players further away, and say/respond lay somewhere in between.
 
+Radio chat to be added soon, complete with config perms for using it.
+
 VoiceBox will likely interfere with plugins and features like EssentialsChat or typical Vault-based chat plugins. VoiceBox has no dependencies and serves simply to allow realistic conversation styles without all of the extra mess.
 
 Any forks, branches, and pull requests are welcome! Please feel free to voice criticism to better the project, as well.
