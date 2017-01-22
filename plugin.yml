@@ -1,6 +1,6 @@
 name: VoiceBox
 main: com.kraken.voicebox.VoiceBox
-version: 0.5.3 (beta)
+version: 0.5.4 (beta)
 commands: 
      vb:
         description: Info for the VoiceBox chat plugin.

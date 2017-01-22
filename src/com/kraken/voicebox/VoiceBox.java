@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.5.3
+// |VOICEBOX v0.5.4
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -312,7 +312,7 @@ public class VoiceBox extends JavaPlugin {
 			    				case "true":
 			    				case "enable":
 			    				case "enabled":
-			    					getConfig().set("joinMessageEnabled", true);
+			    					getConfig().set("joinMsgEnabled", true);
 			    					saveConfig();
 			    					this.joinMsgEnabled = true;
 			    					
@@ -328,7 +328,7 @@ public class VoiceBox extends JavaPlugin {
 			    				case "false":
 			    				case "disable":
 			    				case "disabled":
-			    					getConfig().set("joinMessageEnabled", false);
+			    					getConfig().set("joinMsgEnabled", false);
 			    					saveConfig();
 			    					this.joinMsgEnabled = false;
 			    					
