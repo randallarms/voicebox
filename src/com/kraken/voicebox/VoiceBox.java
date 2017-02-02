@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.5.4
+// |VOICEBOX v0.6
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you. 
 // |
@@ -33,16 +33,20 @@ public class VoiceBox extends JavaPlugin {
 	public ArrayList<String> shhh = new ArrayList<String>(); 
     private File censorFile = new File("plugins/VoiceBox", "censor.yml");
     private FileConfiguration censor = YamlConfiguration.loadConfiguration(censorFile);
+    
+    private File playersFile = new File("plugins/VoiceBox", "players.yml");
+    private FileConfiguration players = YamlConfiguration.loadConfiguration(playersFile);
+    
+    RadioListener radios;
+    
 	String motd;
 	Boolean joinMsgEnabled;
 
     @Override
     public void onEnable() {
     	
-        getLogger().info("VoiceBox has been enabled.");
+        getLogger().info("[VB] VoiceBox has been enabled.");
     	PluginManager pm = getServer().getPluginManager();
-    	VBListener listener = new VBListener(this);
-		pm.registerEvents(listener, this);
 		
 		if (getConfig().getString("motd") == null) {
 			getConfig().set("motd", "Welcome to the server!");
@@ -64,14 +68,29 @@ public class VoiceBox extends JavaPlugin {
         try {
 			censor.save(censorFile);
 		} catch (IOException e1) {
-			System.out.println("Could not properly initialize censor file; expect possible censor errors.");
+			System.out.println("[VB] Could not properly initialize censor file; expect possible censor errors.");
 		}
     
     	for ( String key : censor.getKeys(false) ) {
     		shhh.add( key.toLowerCase() );
         }
+    	
+      //Initialize the players file
+        try {
+			players.save(playersFile);
+		} catch (IOException e1) {
+			System.out.println("[VB] Could not properly save players file; expect possible errors.");
+		}
         
-        //Chat type: 'say' (no command)
+      //Initialize radios
+    	radios = new RadioListener(this, players, playersFile);
+    	pm.registerEvents(radios, this);
+    	
+      //Initialize main listener
+    	VBListener listener = new VBListener(this, radios);
+		pm.registerEvents(listener, this);
+    	
+      //Chat type: 'say' (no command), 'radio' (when broadcasting)
         getServer().getPluginManager().registerEvents(new Listener() {
         	
         	@EventHandler
@@ -79,42 +98,55 @@ public class VoiceBox extends JavaPlugin {
         		
         		Player player = e.getPlayer();
         		
-        		//Preparing the message
-        		String rawMessage = e.getMessage();
-        		String messageBulk = ("" + ChatColor.ITALIC + e.getPlayer().getName() + " says, ");
+        		if ( radios.isBroadcasting(player) && radios.onAir(player) ) {
         			
-	        		//Max distance from sender to receiver
-	        		int blockDistance = 26;
-	        		
-	        		Location playerLocation = e.getPlayer().getLocation();
-	        		
-	        		for (Player peep : e.getRecipients()) {
-	        			
-	        			double peepDistance = peep.getLocation().distance(playerLocation);
-	        			boolean isCensored = false;
-	        			
-	        			//Check the censor
-	        			for ( String badWord : shhh ) {
-	        				
-	        				if ( rawMessage.toLowerCase().contains(badWord) ) {
-	        					player.sendMessage(ChatColor.RED + "You are forbidden from speaking banned phrases.");
-	        					isCensored = true;
-	        					break;
-	        				}
-	        				
-	        			}
-	        				
-	        			if (!isCensored) {
-	        				if (peepDistance <= blockDistance && peep != player) {
-		        				peep.sendMessage(ChatColor.DARK_GREEN + messageBulk + ChatColor.RESET + ChatColor.DARK_GREEN +  "\"" + rawMessage + "\"");
-		                    } else if (peepDistance <= blockDistance && peep == player) {
-		                    	peep.sendMessage(ChatColor.GREEN + messageBulk + ChatColor.RESET + ChatColor.GREEN +  "\"" + rawMessage + "\"");
-		                    }
-	        			}
-	        			
-	                }
+        			String[] args = e.getMessage().split(" ");
+        			
+        			ChatRelay chat = new ChatRelay(player, args, shhh);
+        			chat.broadcast(radios);
+        			
+        			e.getRecipients().clear();
+        			
+        		} else {
         		
-        		e.getRecipients().clear();
+	        		//Preparing the message
+	        		String rawMessage = e.getMessage();
+	        		String messageBulk = ("" + ChatColor.ITALIC + e.getPlayer().getName() + " says, ");
+	        			
+		        		//Max distance from sender to receiver
+		        		int blockDistance = 26;
+		        		
+		        		Location playerLocation = e.getPlayer().getLocation();
+		        		
+		        		for (Player peep : e.getRecipients()) {
+		        			
+		        			double peepDistance = peep.getLocation().distance(playerLocation);
+		        			boolean isCensored = false;
+		        			
+		        			//Check the censor
+		        			for ( String badWord : shhh ) {
+		        				
+		        				if ( rawMessage.toLowerCase().contains(badWord) ) {
+		        					player.sendMessage(ChatColor.RED + "You are forbidden from speaking banned phrases.");
+		        					isCensored = true;
+		        					break;
+		        				}
+		        				
+		        			}
+		        				
+		        			if (!isCensored) {
+		        				if (peepDistance <= blockDistance && peep != player) {
+			        				peep.sendMessage(ChatColor.DARK_GREEN + messageBulk + ChatColor.RESET + ChatColor.DARK_GREEN +  "\"" + rawMessage + "\"");
+			                    } else if (peepDistance <= blockDistance && peep == player) {
+			                    	peep.sendMessage(ChatColor.GREEN + messageBulk + ChatColor.RESET + ChatColor.GREEN +  "\"" + rawMessage + "\"");
+			                    }
+		        			}
+		        			
+		                }
+	        		
+	        		e.getRecipients().clear();
+	        		
+	        	}
         		
         	}
         	
@@ -124,7 +156,7 @@ public class VoiceBox extends JavaPlugin {
     
     @Override
     public void onDisable() {
-        getLogger().info("VoiceBox has been disabled.");
+        getLogger().info("[VB] VoiceBox has been disabled.");
     }
     
     //VoiceBox commands
@@ -166,7 +198,7 @@ public class VoiceBox extends JavaPlugin {
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
     							+ " title {\"text\":\"VoiceBox\",\"color\":\"light_purple\",\"bold\":\"true\"}");
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
-    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.5.3)\",\"color\":\"gold\"}");  
+    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.6)\",\"color\":\"gold\"}");  
     					
 		                return true;
 		                
@@ -190,6 +222,132 @@ public class VoiceBox extends JavaPlugin {
 	    		case "grumble":
 	    			
 	    			return chat.grumble();
+	    	
+	    	//Command: radio
+	    		case "radio":
+	    			
+	    			//Personal radio control
+	    			if ( args.length == 1 ) {
+	    			
+	    				switch ( args[0].toLowerCase() ) {
+	    					case "enable":
+	    					case "on":
+	    					case "true":
+	    						
+	    						if ( radios.isBroadcasting(player) ) {
+	    							radios.setOnAir(player, true);
+	    							player.sendMessage(ChatColor.GREEN + "Your radio has been turned on.");
+	    						} else {
+	    							player.sendMessage(ChatColor.RED + "You do not have radio access.");
+	    						}
+	    						return true;
+	    						
+	    					case "disable":
+	    					case "off":
+	    					case "false":
+	    						
+	    						if ( radios.isBroadcasting(player) ) {
+	    							radios.setOnAir(player, false);
+	    							player.sendMessage(ChatColor.GREEN + "Your radio has been turned off.");
+	    						} else {
+	    							player.sendMessage(ChatColor.RED + "You do not have radio access.");
+	    						}
+	    						return true;
+	    						
+	    					default:
+	    						
+	    						player.sendMessage(ChatColor.RED + "Try entering \"/radio <on/off>\".");
+	    						return true;
+    						
+	    				}
+	    			
+	    			//Others' radio control
+	    			} else if ( player.isOp() && args.length == 2) {
+	    				
+	    				switch ( args[0].toLowerCase() ) {
+	    					case "enable":
+	    					case "on":
+	    					case "true":
+	    						
+	    						for ( String UUID : players.getKeys(false) ) {
+	    							if ( players.getString(UUID + ".info.name").equals(args[1]) ) {
+	    								players.set(UUID + ".radio.allowed", true);
+	    								savePlayersFile();
+	    								if ( Bukkit.getPlayerExact(args[1]) != null ) {
+	    									radios.setBroadcasting(player, true);
+	    								}
+	    								player.sendMessage(ChatColor.GREEN + "Radio access granted.");
+	    								return true;
+	    							}
+	    						}
+	    						
+	    						player.sendMessage(ChatColor.RED + "Player not found!");
+	    						return true;
+	    						
+	    					case "disable":
+	    					case "off":
+	    					case "false":
+	    						
+	    						for ( String UUID : players.getKeys(false) ) {
+	    							if ( players.getString(UUID + ".info.name").equals(args[1]) ) {
+	    								players.set(UUID + ".radio.allowed", false);
+	    								savePlayersFile();
+	    								if ( Bukkit.getPlayerExact(args[1]) != null ) {
+	    									radios.setBroadcasting(player, false);
+	    								}
+	    								player.sendMessage(ChatColor.GREEN + "Radio access removed.");
+	    								return true;
+	    							}
+	    						}
+	    						
+	    						player.sendMessage(ChatColor.RED + "Player not found!");
+	    						return true;
+	    						
+	    					default:
+	    						
+	    						player.sendMessage(ChatColor.RED + "Try entering \"/radio <on/off> <playerName>\".");
+	    						return true;
+	    						
+	    				}
+	    				
+	    			}
+	    				
+	    			player.sendMessage(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
+	    			return true;
+	    			
+	        //Command: ch 
+	    		case "freq":
+	    		case "frequency":
+	    		case "channel":
+	    		case "ch":
+	    		case "tune":
+	    			
+	    			Integer frequency;
+	    			
+	    		    try { 
+	    		        frequency = Integer.parseInt(args[0]); 
+	    		    } catch(NumberFormatException e) { 
+	    		    	player.sendMessage(ChatColor.RED + "Channel must be an integer number between 1 and 9999.");
+	    		        return true; 
+	    		    }
+	    		    
+	    		    if ( frequency <= 0 || frequency > 9999 ) {
+	    		    	player.sendMessage(ChatColor.RED + "Channel must be an integer number between 1 and 9999 (inclusive).");
+	    		        return true; 
+	    		    }
+	    			
+	    			if ( args.length == 1 ) {
+	    				if ( radios.isBroadcasting(player) ) {
+		    				player.sendMessage(ChatColor.GREEN + "You are now set to channel " + frequency + ".");
+		    				radios.setFrequency(player, frequency);
+	    				} else {
+	    					player.sendMessage(ChatColor.RED + "You do not have radio access.");
+	    				}
+	    			} else {
+	    				player.sendMessage(ChatColor.RED + "Too many arguments; try \"/ch <#>\".");
+	    			}
+	    			
+	    			return true;
             
 	        //Command: y <msg> (Chat type: 'yell')  
 	    		case "shout":
@@ -356,6 +514,16 @@ public class VoiceBox extends JavaPlugin {
     	player.sendMessage(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
         return true;
         
+    }
+    
+    public void savePlayersFile() {
+    	
+        try {
+			players.save(playersFile);
+		} catch (IOException e1) {
+			System.out.println("[VB] Could not properly save players file; expect possible errors.");
+		}
+    	
     }
     
     public String getMotd() {
