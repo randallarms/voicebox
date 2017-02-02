@@ -213,6 +213,54 @@ public class ChatRelay {
     	
     }
     
+    public boolean broadcast(RadioListener radios) {
+    	
+		if (args.length > 0) {	
+    		
+    		//Concatenate the message
+        	int n = 0;
+        	String rawMessage = new String();
+        	int length = args.length;
+        	int frequency = radios.getFrequency(player);
+    		
+        	while (args[n] != null) {
+        		
+        		if ( isCensored(args[n]) ) {
+	        		return true;
+	        	}
+        		
+        		if (n >= 1) {
+	        		rawMessage = rawMessage + " " + args[n];
+	        		n++;
+        	    } else {
+	        		rawMessage = rawMessage + args[n];
+	        		n++;
+        	    }
+        		
+        		if (n >= length) {
+        			break;
+        		}
+        		
+        	}   
+		        	
+        	for ( Player peep : Bukkit.getServer().getOnlinePlayers() ) {
+        		if ( radios.getFrequency(peep) == frequency && radios.isBroadcasting(peep) && peep != player ) {
+        			peep.sendMessage(ChatColor.GOLD + "" + ChatColor.ITALIC + player.getName() + " broadcasts, " + ChatColor.RESET 
+        								+ "" + ChatColor.GOLD + "\"" + rawMessage + "\"");
+        		}
+        	}	           
+        	
+            player.sendMessage(ChatColor.GOLD + "" + ChatColor.ITALIC + "You broadcast, " + ChatColor.RESET + "" 
+            					+ ChatColor.GOLD + "\"" + rawMessage + "\"");
+
+            return true;
+            
+        }
+		
+		return true;
+    	
+    }
+    
     public boolean grumble() {
     	
 		int blockDistance = 20;
