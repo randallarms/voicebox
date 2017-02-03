@@ -1,7 +1,8 @@
 // ========================================================================
-// |VOICEBOX v0.6
+// |VOICEBOX v0.6.1
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
-// | code inspired by various Bukkit & Spigot devs -- thank you. 
+// | code inspired by various Bukkit & Spigot devs -- thank you.
+// | code quality tested by *fatpigsarefat* -- THANK YOU!
 // |
 // | Always free & open-source! If this plugin is being sold or re-branded,
 // | please let me know on the SpigotMC site, or wherever you can. Thanks!
@@ -198,7 +199,7 @@ public class VoiceBox extends JavaPlugin {
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
     							+ " title {\"text\":\"VoiceBox\",\"color\":\"light_purple\",\"bold\":\"true\"}");
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
-    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.6)\",\"color\":\"gold\"}");  
+    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.6.1)\",\"color\":\"gold\"}");  
     					
 		                return true;
 		                
@@ -236,6 +237,7 @@ public class VoiceBox extends JavaPlugin {
 	    						
 	    						if ( radios.isBroadcasting(player) ) {
 	    							radios.setOnAir(player, true);
+	    							savePlayersFile();
 	    							player.sendMessage(ChatColor.GREEN + "Your radio has been turned on.");
 	    						} else {
 	    							player.sendMessage(ChatColor.RED + "You do not have radio access.");
@@ -248,6 +250,7 @@ public class VoiceBox extends JavaPlugin {
 	    						
 	    						if ( radios.isBroadcasting(player) ) {
 	    							radios.setOnAir(player, false);
+	    							savePlayersFile();
 	    							player.sendMessage(ChatColor.GREEN + "Your radio has been turned off.");
 	    						} else {
 	    							player.sendMessage(ChatColor.RED + "You do not have radio access.");
@@ -269,39 +272,41 @@ public class VoiceBox extends JavaPlugin {
 	    					case "on":
 	    					case "true":
 	    						
-	    						for ( String UUID : players.getKeys(false) ) {
-	    							if ( players.getString(UUID + ".info.name").equals(args[1]) ) {
-	    								players.set(UUID + ".radio.allowed", true);
-	    								savePlayersFile();
-	    								if ( Bukkit.getPlayerExact(args[1]) != null ) {
-	    									radios.setBroadcasting(player, true);
-	    								}
-	    								player.sendMessage(ChatColor.GREEN + "Radio access granted.");
-	    								return true;
-	    							}
-	    						}
+	    						if ( Bukkit.getPlayerExact( args[1] ) == null ) {
+    								player.sendMessage(ChatColor.RED + "Player not found!");
+    	    						return true;
+								}
 	    						
-	    						player.sendMessage(ChatColor.RED + "Player not found!");
-	    						return true;
+	    						Player target = (Player) Bukkit.getPlayerExact( args[1] );
+    							String UUIDString = target.getUniqueId().toString();
+	    						
+    							players.set(UUIDString + ".radio.allowed", true);
+    							players.set(UUIDString + ".info.name", target.getName());
+								savePlayersFile();
+								radios.setBroadcasting(UUIDString, true);
+								
+								player.sendMessage(ChatColor.GREEN + "Radio access granted.");
+								return true;
 	    						
 	    					case "disable":
 	    					case "off":
 	    					case "false":
 	    						
-	    						for ( String UUID : players.getKeys(false) ) {
-	    							if ( players.getString(UUID + ".info.name").equals(args[1]) ) {
-	    								players.set(UUID + ".radio.allowed", false);
-	    								savePlayersFile();
-	    								if ( Bukkit.getPlayerExact(args[1]) != null ) {
-	    									radios.setBroadcasting(player, false);
-	    								}
-	    								player.sendMessage(ChatColor.GREEN + "Radio access removed.");
-	    								return true;
-	    							}
-	    						}
+	    						if ( Bukkit.getPlayerExact( args[1] ) == null ) {
+    								player.sendMessage(ChatColor.RED + "Player not found!");
+    	    						return true;
+								}
 	    						
-	    						player.sendMessage(ChatColor.RED + "Player not found!");
-	    						return true;
+	    						Player targetB = (Player) Bukkit.getPlayerExact( args[1] );
+    							String UUIDStringB = targetB.getUniqueId().toString();
+	    						
+    							players.set(UUIDStringB + ".radio.allowed", false);
+    							players.set(UUIDStringB + ".info.name", targetB.getName());
+								savePlayersFile();
+								radios.setBroadcasting(UUIDStringB, false);
+								
+								player.sendMessage(ChatColor.GREEN + "Radio access removed.");
+								return true;
 	    						
 	    					default:
 	    						
@@ -329,6 +334,9 @@ public class VoiceBox extends JavaPlugin {
 	    		    } catch(NumberFormatException e) { 
 	    		    	player.sendMessage(ChatColor.RED + "Channel must be an integer number between 1 and 9999.");
 	    		        return true; 
+	    		    } catch(ArrayIndexOutOfBoundsException e) {
+	    		    	player.sendMessage(ChatColor.RED + "Try \"/ch <#>\".");
+	    		        return true;
 	    		    }
 	    		    
 	    		    if ( frequency <= 0 || frequency > 9999 ) {
@@ -340,6 +348,7 @@ public class VoiceBox extends JavaPlugin {
 	    				if ( radios.isBroadcasting(player) ) {
 		    				player.sendMessage(ChatColor.GREEN + "You are now set to channel " + frequency + ".");
 		    				radios.setFrequency(player, frequency);
+		    				savePlayersFile();
 	    				} else {
 	    					player.sendMessage(ChatColor.RED + "You do not have radio access.");
 	    				}

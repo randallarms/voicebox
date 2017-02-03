@@ -1,7 +1,6 @@
 package com.kraken.voicebox;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,16 +40,9 @@ public class RadioListener implements Listener {
     	  
       }
       
-      public void setBroadcasting(Player player, Boolean isBroadcasting) {
+      public void setBroadcasting(String UUIDString, Boolean value) {
     	  
-    	  String UUIDString = player.getUniqueId().toString();
-		  players.set(UUIDString + ".radio.allowed", isBroadcasting);
-    	  
-          try {
-  			  players.save(playersFile);
-  		  } catch (IOException e1) {
-  			  System.out.println("[VB] Could not properly initialize players file; expect possible errors.");
-  	  	  }
+		  players.set(UUIDString + ".radio.allowed", value);
           
       }
       
@@ -65,12 +57,6 @@ public class RadioListener implements Listener {
     	  
     	  String UUIDString = player.getUniqueId().toString();
 		  players.set(UUIDString + ".radio.frequency", frequency);
-    	  
-          try {
-  			  players.save(playersFile);
-  		  } catch (IOException e1) {
-  			  System.out.println("[VB] Could not properly initialize players file; expect possible errors.");
-  	  	  }
     	  
       }
       
