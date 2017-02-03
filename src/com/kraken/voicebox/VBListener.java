@@ -33,20 +33,27 @@ public class VBListener implements Listener {
     	  Player player = (Player) e.getPlayer();
     	  String UUIDString = player.getUniqueId().toString();
     	  
-    	  if ( !player.hasPlayedBefore() ) {
+    	  if ( !players.getKeys(false).contains(UUIDString) ) {
     		  
     		  players.set(UUIDString + ".info.name", player.getName());
     		  players.set(UUIDString + ".radio.allowed", false);
     		  players.set(UUIDString + ".radio.broadcasting", false);
     		  players.set(UUIDString + ".radio.frequency", 1);
     		  
-    	        try {
-    				players.save(playersFile);
-    			} catch (IOException e1) {
-    				System.out.println("[VB] Could not fully initialize player's radio info; expect possible errors.");
-    			}
+    	  }
+    	  
+    	  if ( !player.getName().equals( players.getString( UUIDString + ".info.name") ) ) {
+    		  
+    		  players.set(UUIDString + ".info.name", player.getName());
+    		  player.sendMessage("Name added");
     		  
     	  }
+    	  
+    	  try {
+		  		players.save(playersFile);
+			} catch (IOException e1) {
+				System.out.println("[VB] Could not fully initialize player's radio info; expect possible errors.");
+			}
     	  
     	  if ( !plugin.joinMsgEnabled() ) {
     		  
