@@ -1,5 +1,5 @@
 // ========================================================================
-// |VOICEBOX v0.6.1
+// |VOICEBOX v0.6.2
 // | by Kraken | https://www.spigotmc.org/members/kraken_.287802/
 // | code inspired by various Bukkit & Spigot devs -- thank you.
 // | code quality tested by *fatpigsarefat* -- THANK YOU!
@@ -32,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class VoiceBox extends JavaPlugin {
 	
 	public ArrayList<String> shhh = new ArrayList<String>(); 
+	
     private File censorFile = new File("plugins/VoiceBox", "censor.yml");
     private FileConfiguration censor = YamlConfiguration.loadConfiguration(censorFile);
     
@@ -164,10 +165,10 @@ public class VoiceBox extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         
     	String command = cmd.getName();
-    	Player player = (Player) sender;
     	
     	if (sender instanceof Player) {
     		
+        	Player player = (Player) sender;
     		ChatRelay chat = new ChatRelay(player, args, shhh);
     		
 	    	switch (command) {
@@ -199,7 +200,7 @@ public class VoiceBox extends JavaPlugin {
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
     							+ " title {\"text\":\"VoiceBox\",\"color\":\"light_purple\",\"bold\":\"true\"}");
     					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title " + player.getName().toString() 
-    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.6.1)\",\"color\":\"gold\"}");  
+    							+ " subtitle {\"text\":\"Light custom chat plugin by kraken_ (v0.6.2)\",\"color\":\"gold\"}");  
     					
 		                return true;
 		                
@@ -518,11 +519,209 @@ public class VoiceBox extends JavaPlugin {
 	    	        
 	    	}
 	    	
+    	} else {
+    		
+	    	switch (command) {
+	    	
+	    	//Command: vb
+	    		case "voicebox":
+	    		case "vb":		
+	    			
+	    			if ( args.length > 1) {
+	    				
+	    				switch ( args[0].toLowerCase() ) {
+	    				
+	    					case "motd":
+	    						String message = args[1];
+	    						for (int i = 2; i < args.length; i++) {
+	    							message = message + " " + args[i];
+	    						}
+	    						getConfig().set( "motd", message );
+    							saveConfig();
+	    						this.motd = message;
+	    						System.out.println(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GREEN + " | MotD successfully set to: \"" + message + "\"");
+	    						return true;
+	    				
+	    				}
+	    				
+	    			} else if (args.length == 0) {
+	    			
+	    				System.out.println(ChatColor.LIGHT_PURPLE + "[VOICEBOX] Light custom chat plugin by kraken_ (v0.6.2)");
+		                return true;
+		                
+	    			} else {
+	    				
+	    				System.out.println(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
+	    		        return true;
+	    				
+	    			}
+	    	
+	    	//Command: radio
+	    		case "radio":
+	    			
+	    			//Personal radio control (disabled on console command)
+	    			if ( args.length == 1 ) {
+	    				
+						System.out.println(ChatColor.RED + "Try entering \"/radio <on/off> <name>\".");
+						return true;
+	    			
+	    			//Others' radio control
+	    			} else if ( args.length == 2) {
+	    				
+	    				switch ( args[0].toLowerCase() ) {
+	    					case "enable":
+	    					case "on":
+	    					case "true":
+	    						
+	    						if ( Bukkit.getPlayerExact( args[1] ) == null ) {
+	    							System.out.println(ChatColor.RED + "Player not found!");
+    	    						return true;
+								}
+	    						
+	    						Player target = (Player) Bukkit.getPlayerExact( args[1] );
+    							String UUIDString = target.getUniqueId().toString();
+	    						
+    							players.set(UUIDString + ".radio.allowed", true);
+    							players.set(UUIDString + ".info.name", target.getName());
+								savePlayersFile();
+								radios.setBroadcasting(UUIDString, true);
+								
+								System.out.println(ChatColor.GREEN + "Radio access granted.");
+								return true;
+	    						
+	    					case "disable":
+	    					case "off":
+	    					case "false":
+	    						
+	    						if ( Bukkit.getPlayerExact( args[1] ) == null ) {
+	    							System.out.println(ChatColor.RED + "Player not found!");
+    	    						return true;
+								}
+	    						
+	    						Player targetB = (Player) Bukkit.getPlayerExact( args[1] );
+    							String UUIDStringB = targetB.getUniqueId().toString();
+	    						
+    							players.set(UUIDStringB + ".radio.allowed", false);
+    							players.set(UUIDStringB + ".info.name", targetB.getName());
+								savePlayersFile();
+								radios.setBroadcasting(UUIDStringB, false);
+								
+								System.out.println(ChatColor.GREEN + "Radio access removed.");
+								return true;
+	    						
+	    					default:
+	    						
+	    						System.out.println(ChatColor.RED + "Try entering \"/radio <on/off> <playerName>\".");
+	    						return true;
+	    						
+	    				}
+	    				
+	    			}
+	    				
+	    			System.out.println(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
+	    			return true;
+	    			
+	    	//Command: censor <add/remove> <phrase>
+	    		case "censor":
+	    			
+	    			String arg;
+	    			
+		    		if ( args.length > 1) {
+		    			
+		    			switch (args[0]) {
+		    			
+		    				case "add":
+		    					arg = args[1].toLowerCase();
+		    					if ( !shhh.contains( arg ) ) {
+		    						shhh.add( arg );
+		    						censor.set(arg, true);
+		    				        try {
+		    							censor.save(censorFile);
+		    						} catch (IOException e1) {
+		    							System.out.println("Could not properly initialize censor file; expect possible censor errors.");
+		    						}
+		    				        System.out.println(ChatColor.GREEN + "Phrase added to the censor.");
+		    						return true;	
+		    					}
+		    					
+		    				case "remove":
+		    					arg = args[1].toLowerCase();
+		    					if ( shhh.contains( arg ) ) {
+		    						shhh.remove( arg );
+		    						censor.set(arg, null);
+		    				        try {
+		    							censor.save(censorFile);
+		    						} catch (IOException e1) {
+		    							System.out.println("Could not properly initialize censor file; expect possible censor errors.");
+		    						}
+		    				        System.out.println(ChatColor.GREEN + "Phrase removed from the censor.");
+		    					} else {
+		    						System.out.println(ChatColor.RED + "Phrase not found in the censor.");
+		    					}
+		    					return true;
+		    			
+		    			}
+		    			
+		    		} else if ( args.length <= 1 ) {
+		    			
+		    			System.out.println(ChatColor.RED + "Unrecognized format, use \"/censor <add/remove> <phrase>\"");	
+						return true;
+						
+		    		}
+	    				
+	    		//Command: joinMsg <on/off>
+		    		case "joinMsg":
+		    		case "joinmsg":
+		    		case "joinMessage":
+		    		case "joinmessage":
+		    			
+			    		if ( args.length == 1) {
+			    			
+			    			switch (args[0]) {
+			    			
+			    				case "on":
+			    				case "true":
+			    				case "enable":
+			    				case "enabled":
+			    					getConfig().set("joinMsgEnabled", true);
+			    					saveConfig();
+			    					this.joinMsgEnabled = true;
+			    					
+			    					System.out.println(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GREEN + " | Join message is now enabled.");
+			    					return true;
+			    					
+			    				case "off":
+			    				case "false":
+			    				case "disable":
+			    				case "disabled":
+			    					getConfig().set("joinMsgEnabled", false);
+			    					saveConfig();
+			    					this.joinMsgEnabled = false;
+			    					
+			    					System.out.println(ChatColor.LIGHT_PURPLE + "[VB]" + ChatColor.GREEN 
+			    											+ " | Join message is now " + ChatColor.RED 
+			    											+ "disabled" + ChatColor.GREEN + ".");
+			    					return true;
+			    			
+			    			}
+			    			
+			    		} else {
+			    			
+			    			System.out.println(ChatColor.RED + "Unrecognized format, use \"/joinMsg <on/off>\"");	
+							return true;
+							
+			    		}
+	    	        
+	    	}
+    		
+    		System.out.println("[VB] Your command was not recognized.");
+    		return true;
+    		
     	}
     	
-    	player.sendMessage(ChatColor.RED + "Your command was not recognized, or you have insufficient permissions.");
-        return true;
-        
+    	System.out.println("[VB] Commands can only be executed from the console or by players.");
+    	return true;
+    	
     }
     
     public void savePlayersFile() {
