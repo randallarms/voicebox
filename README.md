@@ -7,6 +7,7 @@ VoiceBox features several chat modes reminiscent of popular MMOs' own stylings (
 This plugin does differ, however, in that players must often be within physical range of the speaker to hear the chat (with the exception of global radio chat, aka 'broadcast' chat). While whispers must go out to close players, yelling/shouting can reach the ears of players further away, and say/respond lay somewhere in between.
 
 commands: 
+
      vb:
         description: Info for the VoiceBox chat plugin.
         usage: /<command> {motd} {msg}
